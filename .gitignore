@@ -10,4 +10,3 @@ vendor/
 
 # dev
 __debug_bin
-.env

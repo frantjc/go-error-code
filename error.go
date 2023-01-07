@@ -1,69 +1,49 @@
 package errorcode
 
-import (
-	"net/http"
-
-	"github.com/frantjc/go-fn"
-)
+import "errors"
 
 type Error struct {
 	error
-	exitCode, httpStatusCode int
+	exitCode int
 }
 
 type ErrorOpt func(*Error)
 
-func WithHTTPStatusCode(statusCode int) ErrorOpt {
-	return func(b *Error) {
-		b.httpStatusCode = statusCode
-	}
-}
-
 func WithExitCode(exitCode int) ErrorOpt {
-	return func(b *Error) {
-		b.exitCode = exitCode
+	return func(e *Error) {
+		e.exitCode = exitCode
 	}
 }
 
-func (b *Error) ExitCode() int {
-	if b == nil {
+func (e *Error) ExitCode() int {
+	if e == nil {
 		return 0
 	}
 
-	return b.exitCode
+	return e.exitCode
 }
 
-func (b *Error) HTTPStatusCode() int {
-	if b == nil {
-		return http.StatusOK
-	}
-
-	return b.httpStatusCode
-}
-
-func (b *Error) Unwrap() error {
-	if b == nil {
+func (e *Error) Unwrap() error {
+	if e == nil {
 		return nil
 	}
 
-	return b.error
+	return e.error
 }
 
-func New(err error, opts ...ErrorOpt) (b *Error) {
-	if e, ok := err.(*Error); ok {
-		e.error = err
-		b = e
+func New(err error, opts ...ErrorOpt) (*Error) {
+	e := &Error{}
+
+	if err == nil {
+		return nil
+	} else if errors.As(err, e) {
 	} else {
-		b = &Error{
-			err,
-			fn.Ternary(err == nil, 0, 1),
-			fn.Ternary(err == nil, http.StatusOK, http.StatusInternalServerError),
-		}
+		e = &Error{err, 1}
 	}
 
 	for _, opt := range opts {
-		opt(b)
+		opt(e)
 	}
 
-	return b
+	return e
 }
