@@ -31,7 +31,7 @@ func (e *Error) Unwrap() error {
 	return e.error
 }
 
-func New(err error, opts ...ErrorOpt) (*Error) {
+func New(err error, opts ...ErrorOpt) *Error {
 	e := &Error{}
 
 	if err == nil {

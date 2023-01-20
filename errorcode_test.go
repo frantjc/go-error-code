@@ -13,7 +13,7 @@ func TestExitCode(t *testing.T) {
 		err      = errorcode.New(fmt.Errorf("test"), errorcode.WithExitCode(expected))
 		actual   = errorcode.ExitCode(err)
 	)
-	
+
 	if actual != expected {
 		t.Error("actual", actual, "does not equal expected", expected)
 		t.FailNow()
