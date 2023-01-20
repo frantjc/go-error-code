@@ -36,7 +36,7 @@ func New(err error, opts ...ErrorOpt) (*Error) {
 
 	if err == nil {
 		return nil
-	} else if errors.As(err, e) {
+	} else if errors.As(err, &e) {
 	} else {
 		e = &Error{err, 1}
 	}
