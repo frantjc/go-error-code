@@ -1,9 +1,17 @@
 package errorcode
 
-type ExitCoder interface {
-	ExitCode() int
+func ExitCode(err error) int {
+	if err == nil {
+		return 0
+	}
+
+	return New(err).ExitCode()
 }
 
-func ExitCode(err error) int {
-	return New(err).ExitCode()
+func HTTPStatusCode(err error) int {
+	if err == nil {
+		return 200
+	}
+
+	return New(err).HTTPStatusCode()
 }

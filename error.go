@@ -4,7 +4,7 @@ import "errors"
 
 type Error struct {
 	error
-	exitCode int
+	exitCode, httpStatusCode int
 }
 
 type ErrorOpt func(*Error)
@@ -15,12 +15,26 @@ func WithExitCode(exitCode int) ErrorOpt {
 	}
 }
 
+func WithHTTPStatusCode(httpStatusCode int) ErrorOpt {
+	return func(e *Error) {
+		e.httpStatusCode = httpStatusCode
+	}
+}
+
 func (e *Error) ExitCode() int {
 	if e == nil {
 		return 0
 	}
 
 	return e.exitCode
+}
+
+func (e *Error) HTTPStatusCode() int {
+	if e == nil {
+		return 0
+	}
+
+	return e.httpStatusCode
 }
 
 func (e *Error) Unwrap() error {
@@ -38,7 +52,7 @@ func New(err error, opts ...ErrorOpt) *Error {
 		return nil
 	} else if errors.As(err, &e) {
 	} else {
-		e = &Error{err, 1}
+		e = &Error{err, 1, 500}
 	}
 
 	for _, opt := range opts {
