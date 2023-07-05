@@ -48,10 +48,11 @@ func (e *Error) Unwrap() error {
 func New(err error, opts ...ErrorOpt) *Error {
 	e := &Error{}
 
-	if err == nil {
+	switch {
+	case err == nil:
 		return nil
-	} else if errors.As(err, &e) {
-	} else {
+	case errors.As(err, &e):
+	default:
 		e = &Error{err, 1, 500}
 	}
 
