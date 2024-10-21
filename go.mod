@@ -1,3 +1,3 @@
 module github.com/frantjc/go-error-code
 
-go 1.20
+go 1.23
